@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef struct Node {
   TSNode node;
@@ -12,6 +13,7 @@ typedef struct Node {
   uint32_t startByte;
   uint32_t endByte;
   uint32_t childCount;
+  bool isMissing;
 } Node;
 
 void log_to_stdout(void *payload, TSLogType type, const char *message) {
@@ -31,6 +33,7 @@ static inline void ts_node_poke(TSNode node, Node *out) {
   out->startByte = ts_node_start_byte(node);
   out->endByte = ts_node_end_byte(node);
   out->childCount = ts_node_child_count(node);
+  out->isMissing = ts_node_is_missing(node);
 }
 
 void ts_tree_root_node_p(TSTree *tree, Node *outNode) {

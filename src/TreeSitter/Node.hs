@@ -20,6 +20,7 @@ data Node = Node
   , nodeStartByte :: !Word32
   , nodeEndByte :: !Word32
   , nodeChildCount :: !Word32
+  , isMissing :: CBool
   }
   deriving (Show, Eq, Generic)
 
@@ -53,7 +54,7 @@ pokeStruct a = Struct (\ p -> do
 
 instance Storable Node where
   alignment _ = alignment (TSNode 0 0 0 0 nullPtr nullPtr :: TSNode)
-  sizeOf _ = 72
+  sizeOf _ = 72 + sizeOf (CBool 0)
   peek = evalStruct $ Node <$> peekStruct
                            <*> peekStruct
                            <*> peekStruct
@@ -62,7 +63,8 @@ instance Storable Node where
                            <*> peekStruct
                            <*> peekStruct
                            <*> peekStruct
-  poke ptr (Node n t s sp ep sb eb c) = flip evalStruct ptr $ do
+                           <*> peekStruct
+  poke ptr (Node n t s sp ep sb eb c m) = flip evalStruct ptr $ do
     pokeStruct n
     pokeStruct t
     pokeStruct s
@@ -71,6 +73,7 @@ instance Storable Node where
     pokeStruct sb
     pokeStruct eb
     pokeStruct c
+    pokeStruct m
 
 instance Storable TSPoint where
   alignment _ = alignment (0 :: Int32)
