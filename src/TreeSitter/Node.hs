@@ -20,7 +20,7 @@ data Node = Node
   , nodeStartByte :: !Word32
   , nodeEndByte :: !Word32
   , nodeChildCount :: !Word32
-  , isMissing :: CBool
+  , isMissing :: !CBool
   }
   deriving (Show, Eq, Generic)
 
