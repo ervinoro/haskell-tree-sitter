@@ -54,7 +54,7 @@ pokeStruct a = Struct (\ p -> do
 
 instance Storable Node where
   alignment _ = alignment (TSNode 0 0 0 0 nullPtr nullPtr :: TSNode)
-  sizeOf _ = 72 + sizeOf (CBool 0)
+  sizeOf _ = fromIntegral sizeof_node
   peek = evalStruct $ Node <$> peekStruct
                            <*> peekStruct
                            <*> peekStruct
@@ -77,7 +77,7 @@ instance Storable Node where
 
 instance Storable TSPoint where
   alignment _ = alignment (0 :: Int32)
-  sizeOf _ = 8
+  sizeOf _ = fromIntegral sizeof_tspoint
   peek = evalStruct $ TSPoint <$> peekStruct
                               <*> peekStruct
   poke ptr (TSPoint r c) = flip evalStruct ptr $ do
@@ -86,7 +86,7 @@ instance Storable TSPoint where
 
 instance Storable TSNode where
   alignment _ = alignment (nullPtr :: Ptr ())
-  sizeOf _ = 32
+  sizeOf _ = fromIntegral sizeof_tsnode
   peek = evalStruct $ TSNode <$> peekStruct
                              <*> peekStruct
                              <*> peekStruct
@@ -130,4 +130,8 @@ instance Monad Struct where
   {-# INLINE (>>=) #-}
 
 
+
+foreign import ccall "src/bridge.c sizeof_tsnode" sizeof_tsnode :: CSize
+foreign import ccall "src/bridge.c sizeof_tspoint" sizeof_tspoint :: CSize
+foreign import ccall "src/bridge.c sizeof_node" sizeof_node :: CSize
 foreign import ccall interruptible "src/bridge.c ts_node_copy_child_nodes" ts_node_copy_child_nodes :: Ptr TSNode -> Ptr Node -> IO ()
