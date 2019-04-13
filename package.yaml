@@ -8,7 +8,6 @@ copyright:           "2019 Ervin Oro"
 
 extra-source-files:
 - README.md
-- ChangeLog.md
 
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
@@ -21,28 +20,21 @@ description:         Please see the README on GitHub at <https://github.com/ervi
 
 dependencies:
 - base >= 4.7 && < 5
+- bindings-DSL
 
 library:
   source-dirs: src
-
-executables:
-  haskell-tree-sitter-exe:
-    main:                Main.hs
-    source-dirs:         app
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - haskell-tree-sitter
-
-tests:
-  haskell-tree-sitter-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - haskell-tree-sitter
+  exposed-modules: TreeSitter.Api
+  include-dirs:
+    - vendor/tree-sitter/lib/include/
+    - vendor/tree-sitter/lib/src
+    - vendor/tree-sitter/lib/utf8proc
+    - includes/
+  install-includes:
+    - hs_api.h
+    - tree_sitter/api.h
+  c-sources:
+    - src/hs_api.c
+    - vendor/tree-sitter/lib/src/lib.c
+  default-extensions:
+    - ForeignFunctionInterface
